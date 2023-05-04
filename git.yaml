@@ -1,0 +1,18 @@
+name: Deploy to Azure
+on: push
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Validate Bicep file
+        run: |
+          az bicep validate --file deploy_bicep.bicep
+      - name: Deploy resources to Azure
+        run: |
+          az deployment group create --resource-group myResourceGroup --template-file deploy_bicep.bicep
